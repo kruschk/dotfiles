@@ -1,0 +1,7 @@
+[user]
+	name = Jonah Kruschke
+	email = jonah.kruschke@gmail.com
+[core]
+	autocrlf = input
+[init]
+	defaultBranch = main
