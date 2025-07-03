@@ -1,0 +1,191 @@
+# Custom configuration for sway
+# See `man 5 sway` for a complete reference.
+
+############################################################################
+# Definitions
+############################################################################
+set $left h
+set $down j
+set $up k
+set $right l
+set $modifier Mod4
+set $lock swaylock --color 000000 --daemonize --font monospace \
+                   --image /usr/share/backgrounds/archlinux/wireparts.png \
+                   --indicator-radius 75
+set $resize_mode resize
+set $system_mode system: [e]xit Sway [l]ock [p]oweroff [r]eboot [s]uspend
+
+############################################################################
+# Bindings
+############################################################################
+bindsym $modifier+m bar mode toggle
+bindsym $modifier+Return exec foot
+bindsym $modifier+Shift+c reload
+bindsym $modifier+Shift+e exec swaynag -t warning \
+                                       -m "Do you really want to exit Sway?" \
+                                       -B "Yes, exit Sway" "swaymsg exit"
+bindsym $modifier+x exec dmenu_path | dmenu | xargs swaymsg exec --
+
+# Containers
+bindsym $modifier+a focus parent
+bindsym $modifier+b split horizontal
+bindsym $modifier+d focus child
+bindsym $modifier+e layout toggle split
+bindsym $modifier+f fullscreen
+bindsym $modifier+minus scratchpad show
+bindsym $modifier+n split none
+bindsym $modifier+Shift+minus move scratchpad
+bindsym $modifier+Shift+q kill
+bindsym $modifier+Shift+space floating toggle
+bindsym $modifier+s layout stacking
+bindsym $modifier+space focus mode_toggle
+bindsym $modifier+t layout toggle all
+bindsym $modifier+u [tiling workspace="__focused__"] move workspace "reorder"; \
+                    [workspace="reorder"] move workspace current
+bindsym $modifier+v split vertical
+bindsym $modifier+w layout tabbed
+
+# Navigation
+bindsym $modifier+$down focus down
+bindsym $modifier+$left focus left
+bindsym $modifier+$right focus right
+bindsym $modifier+$up focus up
+bindsym $modifier+Down focus down
+bindsym $modifier+Left focus left
+bindsym $modifier+Right focus right
+bindsym $modifier+Shift+$down move down
+bindsym $modifier+Shift+$left move left
+bindsym $modifier+Shift+$right move right
+bindsym $modifier+Shift+$up move up
+bindsym $modifier+Shift+Down move down
+bindsym $modifier+Shift+Left move left
+bindsym $modifier+Shift+Right move right
+bindsym $modifier+Shift+Up move up
+bindsym $modifier+Up focus up
+
+# Special keys
+bindsym XF86AudioLowerVolume exec amixer sset Master 1dB-
+bindsym XF86AudioMute exec amixer sset Master toggle
+bindsym XF86AudioRaiseVolume exec amixer sset Master 1dB+
+
+# Workspaces
+bindsym $modifier+1 workspace number 1
+bindsym $modifier+2 workspace number 2
+bindsym $modifier+3 workspace number 3
+bindsym $modifier+4 workspace number 4
+bindsym $modifier+5 workspace number 5
+bindsym $modifier+6 workspace number 6
+bindsym $modifier+7 workspace number 7
+bindsym $modifier+8 workspace number 8
+bindsym $modifier+9 workspace number 9
+bindsym $modifier+0 workspace number 10
+bindsym $modifier+Shift+1 move container to workspace number 1
+bindsym $modifier+Shift+2 move container to workspace number 2
+bindsym $modifier+Shift+3 move container to workspace number 3
+bindsym $modifier+Shift+4 move container to workspace number 4
+bindsym $modifier+Shift+5 move container to workspace number 5
+bindsym $modifier+Shift+6 move container to workspace number 6
+bindsym $modifier+Shift+7 move container to workspace number 7
+bindsym $modifier+Shift+8 move container to workspace number 8
+bindsym $modifier+Shift+9 move container to workspace number 9
+bindsym $modifier+Shift+0 move container to workspace number 10
+bindsym $modifier+Tab workspace back_and_forth
+
+# A mode for locking, suspending, powering off, etc
+bindsym $modifier+Shift+p mode "$system_mode"
+mode "$system_mode" {
+    # These bindings trigger upon entering the mode.
+    bindsym e exit
+    # `loginctl lock-session` doesn't work for some reason.
+    bindsym l mode default; exec "$lock"
+    bindsym p exec systemctl poweroff
+    bindsym r exec systemctl reboot
+    bindsym s exec systemctl suspend
+    # Return to the default mode.
+    bindsym $modifier+Shift+p mode default
+    bindsym Escape mode default
+    bindsym Return mode default
+}
+
+# Resizing containers
+bindsym $modifier+r mode $resize_mode
+mode $resize_mode {
+    # Arrow keys
+    bindsym Down resize grow height 10px
+    bindsym Left resize shrink width 10px
+    bindsym Right resize grow width 10px
+    bindsym Up resize shrink height 10px
+    # Vim-like keys
+    bindsym $down resize grow height 10px
+    bindsym $left resize shrink width 10px
+    bindsym $right resize grow width 10px
+    bindsym $up resize shrink height 10px
+    # Return to the default mode.
+    bindsym $modifier+r mode default
+    bindsym Escape mode default
+    bindsym Return mode default
+}
+
+############################################################################
+# Idle configuration
+############################################################################
+# Note: exec_always re-executes the command after reloading the configuration.
+# Note: after resuming from sleep, the character that was entered on the
+# keyboard to wake the machine is consumed by swaylock as the beginning of a
+# password. Figure out if there's a way to fix this, perhaps using the
+# `after-resume` trigger.
+exec_always swayidle -w \
+                     before-sleep "swaymsg mode default && $lock" \
+                     timeout 960 "swaymsg output '*' dpms off" \
+                             resume "swaymsg output '*' dpms on" \
+                     timeout 1020 "$lock"
+# Inhibit idle when a window is fullscreen.
+for_window [class=".*"] inhibit_idle fullscreen
+for_window [app_id=".*"] inhibit_idle fullscreen
+
+############################################################################
+# Input configuration
+############################################################################
+input "type:pointer" {
+    # Acceleration is disabled by default, but it doesn't hurt to be explicit.
+    accel_profile flat
+    pointer_accel -0.625
+}
+
+############################################################################
+# Output configuration
+############################################################################
+# Default wallpaper (more resolutions are available in
+# /usr/share/backgrounds/sway/)
+output * \
+       background \
+       /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png \
+       fill
+
+############################################################################
+# Status bar
+############################################################################
+bar {
+    colors {
+        background #323232
+        inactive_workspace #323232 #323232 #5c5c5c
+        statusline #ffffff
+    }
+    mode dock
+    status_command while echo "$(amixer sget Master | sed -n 's/^.*\[\(.*\)dB].*$/🔊 \1 dB | /p')" \
+                              "$(date +'%F %T')"; \
+                   do sleep 0.5; done
+}
+
+############################################################################
+# Miscellaneous
+############################################################################
+#gaps inner 10
+exec gammastep
+floating_modifier $modifier normal
+focus_wrapping no
+
+############################################################################
+# Imports
+############################################################################
+include /etc/sway/config.d/*

@@ -1,0 +1,22 @@
+# Disable the system bell (only applies to the VT).
+set bell-style none
+
+# Enable the numeric keypad.
+set enable-keypad on
+
+# Enable vi-like editing mode.
+set editing-mode vi
+
+# Editing mode prompts (command: magenta, insert: yellow)
+set show-mode-in-prompt on
+set vi-cmd-mode-string "\1\e[35m\2(n)\1\e(B\e[m\2"
+set vi-ins-mode-string "\1\e[33m\2(i)\1\e(B\e[m\2"
+#$if term=linux
+#    # Blinking underline
+#    set vi-ins-mode-string (i)\1\e[?2c\2 
+#    # Blinking block
+#    set vi-cmd-mode-string (n)\1\e[?6c\2
+#$else
+#    set vi-ins-mode-string (i)\1\e[3 q\2
+#    set vi-cmd-mode-string (n)\1\e[1 q\2
+#$endif
