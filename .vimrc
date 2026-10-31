@@ -1,17 +1,8 @@
 source $VIMRUNTIME/vimrc_example.vim
 
 " Colour scheme
-if &term == "foot"
-    " Set options per `:help xterm-true-color` (via `:help 'termguicolors'`)
-    set t_8b=[48:2:%lu:%lu:%lum
-    set t_8f=[38:2:%lu:%lu:%lum
-    set termguicolors
-    colorscheme gruvbox
-else
-    colorscheme desert " desert, habamax, or pablo preferred
-endif
+colorscheme habamax " desert, habamax, pablo, or slate preferred
 set background=dark
-"hi Normal ctermbg=234
 
 " Indentation
 " Use spaces for indentation (option 2 of `:help 'tabstop'`).
